@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/Flutter-%E2%89%A5%203.24-027DFD?style=flat-square&logo=flutter&logoColor=white" alt="Flutter 3.24+">
   <img src="https://img.shields.io/badge/license-MIT-3DDC84?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/Android-working%20alpha-027DFD?style=flat-square&logo=android&logoColor=white" alt="Android: working alpha">
-  <img src="https://img.shields.io/badge/iOS-scaffolded-9aa0a6?style=flat-square&logo=apple&logoColor=white" alt="iOS: scaffolded">
+  <img src="https://img.shields.io/badge/iOS-running%20on%20device-000000?style=flat-square&logo=apple&logoColor=white" alt="iOS: running on device">
   <img src="https://img.shields.io/badge/PRs-welcome-027DFD?style=flat-square" alt="PRs welcome">
 </p>
 
@@ -28,7 +28,7 @@
   <a href="https://github.com/RomanSlack/dual_camera_recorder_flutter">RomanSlack/dual_camera_recorder_flutter</a>
 </p>
 
-> **Status:** **Android — working alpha**, verified end-to-end on a real device (Pixel 8): simultaneous front+back → live preview, recorded composite `.mp4` with in-sync audio, and composited stills. **iOS — scaffolded** (Swift/Metal written to spec) but **not yet compiled or run**.
+> **Status:** **Android — working alpha**, verified end-to-end on a real device (Pixel 8): simultaneous front+back → live preview, recorded composite `.mp4` with in-sync audio, and composited stills. **iOS — alpha, now running on a real iPhone** (iOS 26): the Metal compositor brings up a live composited front+back preview on `AVCaptureMultiCamSession`, with rotate-upright + aspect-cover and the rounded/circle PiP working. Recording and photo run through the same unified compositor (Android parity by construction); full on-device A/V-sync verification is in progress.
 
 **Keywords:** Flutter dual camera · record front and back camera simultaneously · both cameras at once · picture-in-picture video · composite video to mp4 · CameraX concurrent camera · AVCaptureMultiCamSession · BeReal-style capture · multi-camera recording plugin.
 
@@ -53,6 +53,16 @@ As of mid-2026, **no Flutter plugin records a composited dual-cam video.** The O
 - **Composited photo** (FBO read-back, JPEG) at the same WYSIWYG geometry.
 - **Capability detection** + graceful single-camera fallback; thermal monitoring; a perf HUD (FPS / composite-ms / dropped frames).
 - Verified on a **Pixel 8**: composited front+back `.mp4` (720×1280, h264 + aac) and photo, saved to the gallery from the example app.
+
+## What works today (iOS)
+
+- **Builds and runs on a real iPhone** (iOS 26, A12+) — `AVCaptureMultiCamSession` with manual connection wiring delivers both feeds into one **Metal** compositor.
+- **Live composited dual preview** confirmed on device: primary full-frame + secondary inset (rounded-rect / circle SDF), front mirrored.
+- **Orientation + aspect-cover in the shader** — iOS hands you the raw *landscape* `CVPixelBuffer` (no free rotation like Android's `SurfaceTexture`), so the Metal shader rotates each feed upright and cover-crops it into the portrait canvas itself (port of Android's `texXform`).
+- **Multicam `hardwareCost` gating** — picks a binned ≤720p `activeFormat` per camera and steps frame rate down if the session would exceed the cost budget, so it actually starts.
+- **Same unified compositor** feeds the Flutter preview texture, the `AVAssetWriter` (H.264 + AAC, video PTS off the primary sample buffer / audio passthrough → synced), and the photo — so preview, video, and stills can't drift.
+- **Live debug-tuning** over the shared `dual_camera_recorder/debug` channel (rotation / mirror / source-aspect) to dial in orientation on-device without native rebuilds.
+- **In progress:** full on-device A/V-sync verification over a long clip, proactive thermal downscale, and iOS perf-HUD telemetry.
 
 ## Architecture (federated plugin)
 
@@ -101,13 +111,14 @@ Add permissions in the **consuming app** (camera + microphone on Android; `NSCam
 - **iOS:** A12+ / iOS 13+. Multicam is power/thermal-heavy — cap clip duration, downscale under thermal pressure, stop cleanly on `thermalStateDidChange`.
 - Audio is captured once (mic) and muxed into the output. Front-camera mirroring must be correct in the recorded file.
 - **Orientation/aspect (Android):** the camera delivers a *landscape* buffer, but its `SurfaceTexture` transform matrix already rotates it 90° upright into the portrait canvas before the shader samples it — so the compositor's aspect-cover uses the **rotated** aspect (`h/w`), not `w/h`. A 4:3 source → `0.75` (verified un-stretched on **Pixel 8**, front *and* back). If a new device looks stretched, the example app's **Debug tuning** panel (live rotation-offset / mirror / source-aspect override over the `dual_camera_recorder/debug` MethodChannel) dials it in without rebuilding native code.
+- **Orientation/aspect (iOS):** unlike Android, `AVCaptureVideoDataOutput` delivers the buffer in the sensor's *native landscape* orientation with **no** free rotation — so the Metal shader does the full rotate-upright + aspect-cover itself (it sees the true `w/h`). The same `dual_camera_recorder/debug` panel tunes the per-feed rotation and aspect on-device; the found values then get baked as defaults.
 
 ## Roadmap
 
 - [x] **0.** Federated skeleton + simultaneous preview + capability detection (Android).
 - [x] **1.** Android manual GL compositor → MediaCodec → MediaMuxer; AudioRecord + one-clock A/V sync.
 - [x] **2.** Android photo (FBO re-render) + perf HUD; portrait orientation, sensor-rotation, aspect-fill, circle/PiP/split.
-- [ ] **3.** iOS `AVCaptureMultiCamSession` → Metal compositor → `AVAssetWriter` (+ photo) — **scaffolded, not yet built/run** (needs macOS + Xcode + an A12+ iPhone).
+- [x] **3.** iOS `AVCaptureMultiCamSession` → Metal compositor → `AVAssetWriter` (+ photo) — **builds and runs on a real iPhone**; live composited preview, orientation/aspect, `hardwareCost` gating, debug tuning. Full A/V-sync verification + thermal downscale in progress.
 - [ ] **4.** Resolution options (1440p where supported), richer layout controls, device-orientation handling beyond portrait.
 - [ ] **5.** Polish, docs, pub.dev publish.
 
