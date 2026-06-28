@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 2400px; height: 1160px; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, "DejaVu Sans", sans-serif;
+    background: #ffffff;
+    color: #0b0b0c;
+    overflow: hidden;
+    position: relative;
+  }
+  .mono { font-family: "DejaVu Sans Mono", "SF Mono", Menlo, monospace; }
+
+  /* soft depth behind phones */
+  .glow {
+    position: absolute; right: -260px; top: 50%; transform: translateY(-50%);
+    width: 1500px; height: 1500px; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(2,125,253,0.10), rgba(2,125,253,0.0) 62%);
+  }
+  .glow2 {
+    position: absolute; right: 120px; top: 20%;
+    width: 900px; height: 900px; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(61,220,132,0.10), rgba(61,220,132,0) 60%);
+  }
+
+  .wrap { position: absolute; inset: 0; display: flex; align-items: center; }
+
+  /* ---------- left: copy ---------- */
+  .left { width: 1040px; padding: 0 0 0 130px; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: 24px; letter-spacing: 2px; text-transform: uppercase;
+    color: #027DFD; font-weight: 700; margin-bottom: 34px;
+  }
+  .kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: #027DFD; }
+  h1 {
+    font-size: 104px; line-height: 0.98; font-weight: 800; letter-spacing: -3px;
+    margin-bottom: 30px;
+  }
+  h1 .accent { color: #027DFD; }
+  .pkg {
+    font-size: 30px; color: #6b7280; margin-bottom: 40px; letter-spacing: -0.5px;
+  }
+  .pkg b { color: #0b0b0c; }
+  .sub {
+    font-size: 33px; line-height: 1.45; color: #2b2f36; max-width: 880px; margin-bottom: 52px;
+  }
+  .pills { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 64px; }
+  .pill {
+    font-size: 24px; font-weight: 600; color: #1b1f24;
+    background: #f3f5f7; border: 1px solid #e6e9ec;
+    padding: 14px 24px; border-radius: 999px;
+  }
+  .pill .b { color: #027DFD; }
+  .platforms { display: flex; align-items: center; gap: 52px; }
+  .plat { display: flex; align-items: center; gap: 22px; }
+  .plat img { height: 72px; width: auto; display: block; }
+  .plat span { font-size: 38px; font-weight: 700; color: #2b3037; letter-spacing: -0.5px; }
+  .sep { width: 2px; height: 60px; background: #e2e5e8; }
+
+  /* ---------- right: phones ---------- */
+  .stage {
+    flex: 1; position: relative; height: 100%;
+  }
+  .phone {
+    position: absolute; top: 50%;
+    width: 468px; height: 952px;
+    background: #0c0d0f;
+    border-radius: 62px;
+    padding: 15px;
+    /* soft, tight contact shadow — negative spread so it hugs the device
+       instead of bleeding into a harsh skewed blob under the tilt */
+    box-shadow: 0 24px 50px -18px rgba(17,24,39,0.30),
+                0 6px 14px -8px rgba(17,24,39,0.20);
+  }
+  .phone .screen {
+    width: 100%; height: 100%;
+    border-radius: 48px; overflow: hidden; position: relative;
+    background: #000;
+  }
+  .phone .screen img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .notch {
+    position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+    width: 124px; height: 30px; background: #0c0d0f; border-radius: 18px; z-index: 2;
+  }
+  .phoneA {
+    left: 120px; transform: translateY(-50%) rotate(-7deg); z-index: 1;
+  }
+  .phoneB {
+    left: 560px; transform: translateY(-50%) rotate(6deg); z-index: 3;
+  }
+  /* little caption tag on each phone */
+  .tag {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    background: rgba(12,13,15,0.62); color: #fff; backdrop-filter: blur(6px);
+    font-size: 21px; font-weight: 600; letter-spacing: 0.2px;
+    padding: 10px 20px; border-radius: 999px; white-space: nowrap; z-index: 2;
+  }
+  /* left phone's right half is covered by the front phone — anchor its tag left */
+  .tag.left { left: 26px; transform: none; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="kicker"><span class="dot"></span> Flutter plugin · Android &amp; iOS</div>
+      <h1>Dual&nbsp;Camera<br><span class="accent">Recorder</span></h1>
+      <div class="pkg mono">flutter pub add <b>dual_camera_recorder</b></div>
+      <div class="sub">
+        Record the <b>front and back cameras at once</b> — composited live on the
+        GPU into a single portrait <b>.mp4</b> and photo. The BeReal / Snapchat
+        dual capture, as a proper open-source plugin.
+      </div>
+      <div class="pills">
+        <div class="pill"><span class="b">◆</span> Simultaneous capture</div>
+        <div class="pill"><span class="b">◆</span> PiP · Circle · Split</div>
+        <div class="pill"><span class="b">◆</span> Live preview = recording</div>
+        <div class="pill"><span class="b">◆</span> One GPU composite</div>
+      </div>
+      <div class="platforms">
+        <div class="plat"><img src="logo_flutter.svg"><span>Flutter</span></div>
+        <div class="sep"></div>
+        <div class="plat"><img src="logo_apple.svg"><span>iOS</span></div>
+        <div class="sep"></div>
+        <div class="plat"><img src="logo_android.svg"><span>Android</span></div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="phone phoneA">
+        <div class="notch"></div>
+        <div class="screen">
+          <img src="flutter_dual_camera_recording_package_1.jpg">
+          <div class="tag left">Back · selfie inset</div>
+        </div>
+      </div>
+      <div class="phone phoneB">
+        <div class="notch"></div>
+        <div class="screen">
+          <img src="flutter_dual_camera_recording_package_2.jpg">
+          <div class="tag">Swap · front lead</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

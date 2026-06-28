@@ -1,11 +1,40 @@
-# dual_camera_recorder
+<p align="center">
+  <img src="readme_assets/banner.png" alt="Dual Camera Recorder — record the front and back cameras simultaneously in Flutter, composited into a single portrait video" width="820">
+</p>
 
-A native **dual-camera recorder** for Flutter — records the **front and back cameras simultaneously**, composites them in real time (picture-in-picture / split) on the GPU, and writes a **single portrait `.mp4`** (plus a composited photo). The BeReal / Snapchat dual-camera capture, as a proper federated Flutter plugin.
+<h1 align="center">dual_camera_recorder</h1>
+
+<p align="center">
+  <b>Record the front and back cameras at the same time in Flutter</b> — composited live on the GPU into a <b>single portrait <code>.mp4</code></b> and photo, with a real-time preview. Picture-in-picture, circle inset, or split. The BeReal / Snapchat–style dual-camera capture, as a proper open-source federated plugin for <b>Android &amp; iOS</b>.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-1d1d1f?style=flat-square" alt="Platform: Android and iOS">
+  <img src="https://img.shields.io/badge/Flutter-%E2%89%A5%203.24-027DFD?style=flat-square&logo=flutter&logoColor=white" alt="Flutter 3.24+">
+  <img src="https://img.shields.io/badge/license-MIT-3DDC84?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/Android-working%20alpha-027DFD?style=flat-square&logo=android&logoColor=white" alt="Android: working alpha">
+  <img src="https://img.shields.io/badge/iOS-scaffolded-9aa0a6?style=flat-square&logo=apple&logoColor=white" alt="iOS: scaffolded">
+  <img src="https://img.shields.io/badge/PRs-welcome-027DFD?style=flat-square" alt="PRs welcome">
+</p>
+
+<p align="center">
+  <a href="https://romanslack.com"><img src="https://img.shields.io/badge/Website-romanslack.com-027DFD?style=flat-square&logo=googlechrome&logoColor=white" alt="romanslack.com"></a>
+  <a href="https://github.com/RomanSlack"><img src="https://img.shields.io/badge/GitHub-RomanSlack-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub @RomanSlack"></a>
+  <a href="https://www.linkedin.com/in/roman-slack-a91a6a266/"><img src="https://img.shields.io/badge/LinkedIn-Roman%20Slack-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn — Roman Slack"></a>
+</p>
+
+<p align="center">
+  Built and maintained by <a href="https://romanslack.com"><b>Roman Slack</b></a> ·
+  <a href="https://github.com/RomanSlack/dual_camera_recorder_flutter">RomanSlack/dual_camera_recorder_flutter</a>
+</p>
 
 > **Status:** **Android — working alpha**, verified end-to-end on a real device (Pixel 8): simultaneous front+back → live preview, recorded composite `.mp4` with in-sync audio, and composited stills. **iOS — scaffolded** (Swift/Metal written to spec) but **not yet compiled or run**.
 
+**Keywords:** Flutter dual camera · record front and back camera simultaneously · both cameras at once · picture-in-picture video · composite video to mp4 · CameraX concurrent camera · AVCaptureMultiCamSession · BeReal-style capture · multi-camera recording plugin.
+
 - **pub.dev package name (planned):** `dual_camera_recorder`
-- **Repo:** `github.com/RomanSlack/dual_camera_recorder_flutter`
+- **Repo:** [`github.com/RomanSlack/dual_camera_recorder_flutter`](https://github.com/RomanSlack/dual_camera_recorder_flutter)
+- **Author:** [Roman Slack](https://romanslack.com) — [GitHub](https://github.com/RomanSlack) · [LinkedIn](https://www.linkedin.com/in/roman-slack-a91a6a266/)
 - **License:** MIT (open-source from day one)
 
 ---
@@ -85,6 +114,20 @@ Add permissions in the **consuming app** (camera + microphone on Android; `NSCam
 ## Why it exists / who uses it
 
 Built first for [belo](https://github.com/RomanSlack)'s short-form capture surfaces (pops / peeks / circles) — a BeReal-style "reaction + scene in one authentic clip" that drops straight into the existing media-upload pipeline. Open-sourced because the gap is real and the official `camera` issues (flutter#51928, #102427, #119858) have hundreds of 👍.
+
+## Author
+
+**dual_camera_recorder** is built and maintained by **[Roman Slack](https://romanslack.com)** — software engineer and creator of [belo](https://github.com/RomanSlack).
+
+- 🌐 Website — [romanslack.com](https://romanslack.com)
+- 💻 GitHub — [@RomanSlack](https://github.com/RomanSlack)
+- 💼 LinkedIn — [Roman Slack](https://www.linkedin.com/in/roman-slack-a91a6a266/)
+
+If this plugin saved you from writing a native dual-camera compositor, a ⭐ on [the repo](https://github.com/RomanSlack/dual_camera_recorder_flutter) is appreciated. Issues and PRs welcome.
+
+## License
+
+[MIT](LICENSE) © [Roman Slack](https://romanslack.com)
 
 ---
 
