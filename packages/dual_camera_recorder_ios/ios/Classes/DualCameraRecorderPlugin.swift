@@ -32,7 +32,42 @@ public final class DualCameraRecorderPlugin: NSObject, FlutterPlugin, DualCamera
             textureRegistry: registrar.textures(),
             flutterApi: DualCameraFlutterApi(binaryMessenger: messenger))
         DualCameraHostApiSetup.setUp(binaryMessenger: messenger, api: instance)
+        // Debug-tuning channel (IOS_HANDOFF §6) — mirrors the Android
+        // `dual_camera_recorder/debug` channel; the shared example panel drives
+        // it. Gate behind kDebugMode / strip before pub.dev publish.
+        let debug = FlutterMethodChannel(
+            name: "dual_camera_recorder/debug", binaryMessenger: messenger)
+        debug.setMethodCallHandler { [weak instance] call, result in
+            instance?.handleDebug(call, result) ?? result(FlutterMethodNotImplemented)
+        }
         registrar.publish(instance)
+    }
+
+    private func handleDebug(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let session = session else {
+            result(FlutterError(code: "not_init", message: "initialize() first", details: nil))
+            return
+        }
+        let args = call.arguments as? [String: Any] ?? [:]
+        switch call.method {
+        case "setRotationOffset":
+            let front = args["front"] as? Bool ?? true
+            let offset = args["offset"] as? Int ?? 0
+            session.setRotationOffset(isFront: front, degrees: offset)
+            result(nil)
+        case "setAspectOverride":
+            let front = args["front"] as? Bool ?? true
+            let aspect = Float(args["aspect"] as? Double ?? 0)
+            session.setAspectOverride(isFront: front, aspect: aspect)
+            result(nil)
+        case "setMirrorFront":
+            let on = args["on"] as? Bool ?? true
+            layout.mirrorFront = on
+            session.setLayout(layout)
+            result(nil)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
     }
 
     // MARK: - DualCameraHostApi
@@ -145,11 +180,14 @@ public final class DualCameraRecorderPlugin: NSObject, FlutterPlugin, DualCamera
             .appendingPathComponent("dcr_\(Int(Date().timeIntervalSince1970 * 1000)).\(ext)")
     }
 
+    /// Portrait canvas (vertical video): width < height. The cameras deliver
+    /// landscape buffers; the Metal compositor rotates them upright into this
+    /// portrait canvas (matches Android's `resolutionFor`).
     private func resolution(_ r: DualResolution) -> (Int, Int) {
         switch r {
-        case .sd480: return (854, 480)
-        case .hd720: return (1280, 720)
-        case .hd1080: return (1920, 1080)
+        case .sd480: return (480, 854)
+        case .hd720: return (720, 1280)
+        case .hd1080: return (1080, 1920)
         }
     }
 

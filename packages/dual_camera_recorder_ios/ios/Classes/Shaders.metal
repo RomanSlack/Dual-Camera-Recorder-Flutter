@@ -9,15 +9,18 @@ struct VertexOut {
     float2 local; // 0..1 within this quad, for the rounded-corner SDF
 };
 
+// Field order MUST match QuadUniforms in MetalCompositor.swift exactly
+// (descending alignment: 16 -> 8 -> 4). The Swift struct is memcpy'd in.
 struct QuadUniforms {
-    float4x4 mvp;      // places the quad (full-frame or inset) in NDC
-    float     mirror;   // 1.0 -> flip x (front selfie)
-    float     rounded;  // 1.0 -> apply rounded-corner SDF
-    float2    quadSizePx;
-    float     cornerRadiusPx;
-    // BT.709 limited-range YCbCr -> RGB.
-    float3x3  yuvMatrix;
+    float4x4  mvp;            // places the quad (full-frame or inset) in NDC
+    float3x3  yuvMatrix;      // BT.709 limited-range YCbCr -> RGB
     float3    yuvOffset;
+    float2x2  texXform;       // rotate-upright + aspect-cover (source space)
+    float2    quadSizePx;
+    float     mirror;         // 1.0 -> flip x (front selfie)
+    float     rounded;        // 1.0 -> apply rounded-corner SDF
+    float     cornerRadiusPx;
+    float     _pad;
 };
 
 vertex VertexOut dcr_vertex(uint vid [[vertex_id]],
@@ -28,9 +31,12 @@ vertex VertexOut dcr_vertex(uint vid [[vertex_id]],
     VertexOut out;
     float2 p = pos[vid];
     out.position = u.mvp * float4(p, 0.0, 1.0);
-    float2 t = uv[vid];
-    if (u.mirror > 0.5) { t.x = 1.0 - t.x; }
-    out.texCoord = t;
+    // Center the texcoord, mirror (selfie), then rotate-upright + cover-crop via
+    // texXform, then un-center — matches the Android GLSL VERTEX order so the
+    // recorded file and preview are bit-identical (IOS_HANDOFF §2).
+    float2 a = uv[vid] - 0.5;
+    if (u.mirror > 0.5) { a.x = -a.x; }
+    out.texCoord = u.texXform * a + 0.5;
     out.local = uv[vid];
     return out;
 }
@@ -51,8 +57,8 @@ fragment float4 dcr_fragment(VertexOut in [[stage_in]],
     if (u.rounded > 0.5) {
         // Rounded-rect SDF in this quad's pixel space.
         float2 px = in.local * u.quadSizePx;
-        float2 half = u.quadSizePx * 0.5;
-        float2 q = abs(px - half) - (half - u.cornerRadiusPx);
+        float2 halfSz = u.quadSizePx * 0.5;
+        float2 q = abs(px - halfSz) - (halfSz - u.cornerRadiusPx);
         float dist = length(max(q, 0.0)) - u.cornerRadiusPx;
         alpha = 1.0 - smoothstep(-1.0, 1.0, dist);
     }

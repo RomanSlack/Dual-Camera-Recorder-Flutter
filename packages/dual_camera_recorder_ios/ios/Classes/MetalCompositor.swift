@@ -12,15 +12,19 @@ struct CompositeLayout {
     var splitVertical: Bool
 }
 
+// Fields ordered by DESCENDING alignment (16 → 8 → 4) so Swift `simd` and
+// Metal agree on the byte layout with no ambiguous internal padding — the
+// struct is memcpy'd straight into the shader via setVertex/FragmentBytes.
 private struct QuadUniforms {
-    var mvp: simd_float4x4
-    var mirror: Float
-    var rounded: Float
-    var quadSizePx: simd_float2
+    var mvp: simd_float4x4        // align 16, size 64 — places the quad in NDC
+    var yuvMatrix: simd_float3x3  // align 16, size 48 — BT.709 YCbCr->RGB
+    var yuvOffset: simd_float3    // align 16, size 16
+    var texXform: simd_float2x2   // align 8,  size 16 — rotate-upright + cover-crop
+    var quadSizePx: simd_float2   // align 8,  size 8
+    var mirror: Float             // align 4 — 1.0 -> flip x (selfie)
+    var rounded: Float            // 1.0 -> rounded-corner SDF
     var cornerRadiusPx: Float
     var _pad: Float = 0
-    var yuvMatrix: simd_float3x3
-    var yuvOffset: simd_float3
 }
 
 /// The unified Metal compositor (ARCHITECTURE.md §5.2). Zero-copy in via
@@ -35,6 +39,26 @@ final class MetalCompositor {
     private var pool: CVPixelBufferPool!
     let width: Int
     let height: Int
+
+    // Orientation correction. Unlike Android's SurfaceTexture (which silently
+    // rotates the camera buffer 90° upright before we sample), iOS hands us the
+    // raw landscape `CVPixelBuffer` — so we must rotate upright ourselves, in
+    // the shader, via `texXform`. These are the empirical knobs (driven live by
+    // the debug channel, ARCHITECTURE.md §5.5 / IOS_HANDOFF §6); tune on device,
+    // then bake the found values as defaults. Mutated/read on `dcr.data`.
+    private var frontRotationDeg = 90   // bring front sensor upright (then mirror)
+    private var backRotationDeg = 90    // bring back sensor upright
+    private var frontAspectOverride: Float = 0  // <= 0 => use the buffer's real w/h
+    private var backAspectOverride: Float = 0
+
+    func setRotationOffset(isFront: Bool, degrees: Int) {
+        let d = ((degrees % 360) + 360) % 360
+        if isFront { frontRotationDeg = d } else { backRotationDeg = d }
+    }
+
+    func setAspectOverride(isFront: Bool, aspect: Float) {
+        if isFront { frontAspectOverride = aspect } else { backAspectOverride = aspect }
+    }
 
     // BT.709 limited-range YCbCr -> RGB.
     private let yuvMatrix = simd_float3x3(columns: (
@@ -105,18 +129,25 @@ final class MetalCompositor {
               let enc = cmd.makeRenderCommandEncoder(descriptor: pass) else { return nil }
         enc.setRenderPipelineState(pipeline)
 
-        let primaryMirror = layout.primaryFront && layout.mirrorFront
-        drawFeed(enc, buffer: primary, mvp: matrix_identity_float4x4,
-                 mirror: primaryMirror, rounded: false, quadPx: simd_float2(Float(width), Float(height)), radius: 0)
+        let primaryIsFront = layout.primaryFront
+        let canvasAspect = Float(width) / Float(height)
+        // Primary fills the frame.
+        drawFeed(enc, buffer: primary, isFront: primaryIsFront, mvp: matrix_identity_float4x4,
+                 mirror: primaryIsFront && layout.mirrorFront, rounded: false,
+                 quadPx: simd_float2(Float(width), Float(height)),
+                 targetAspect: canvasAspect, radius: 0)
 
         if let secondary = secondary {
-            let secMirror = !layout.primaryFront && layout.mirrorFront
+            let secondaryIsFront = !layout.primaryFront
             let rect = layout.pictureInPicture ? layout.insetRect : halfRect(layout)
             let mvp = mvpFor(rect: rect)
-            let quadPx = simd_float2(Float(rect.width) * Float(width), Float(rect.height) * Float(height))
-            drawFeed(enc, buffer: secondary, mvp: mvp, mirror: secMirror,
+            let quadW = Float(rect.width) * Float(width)
+            let quadH = Float(rect.height) * Float(height)
+            drawFeed(enc, buffer: secondary, isFront: secondaryIsFront, mvp: mvp,
+                     mirror: secondaryIsFront && layout.mirrorFront,
                      rounded: layout.pictureInPicture && layout.cornerRadiusPx > 0,
-                     quadPx: quadPx, radius: layout.cornerRadiusPx)
+                     quadPx: simd_float2(quadW, quadH),
+                     targetAspect: quadW / quadH, radius: layout.cornerRadiusPx)
         }
 
         enc.endEncoding()
@@ -127,24 +158,59 @@ final class MetalCompositor {
     private func drawFeed(
         _ enc: MTLRenderCommandEncoder,
         buffer: CVPixelBuffer,
+        isFront: Bool,
         mvp: simd_float4x4,
         mirror: Bool,
         rounded: Bool,
         quadPx: simd_float2,
+        targetAspect: Float,
         radius: Float
     ) {
         guard let luma = metalTexture(from: buffer, plane: 0, format: .r8Unorm),
               let chroma = metalTexture(from: buffer, plane: 1, format: .rg8Unorm) else { return }
         enc.setFragmentTexture(luma, index: 0)
         enc.setFragmentTexture(chroma, index: 1)
+
+        // Source aspect = the buffer's REAL landscape w/h (e.g. 4:3 -> 1.333),
+        // unlike Android which sees the pre-rotated h/w. The rotation in
+        // `texXform` is what stands it upright.
+        let override = isFront ? frontAspectOverride : backAspectOverride
+        let w = Float(CVPixelBufferGetWidth(buffer))
+        let h = Float(CVPixelBufferGetHeight(buffer))
+        let srcAspect = override > 0 ? override : (h > 0 ? w / h : 1)
+        let rotationDeg = isFront ? frontRotationDeg : backRotationDeg
+
         var u = QuadUniforms(
-            mvp: mvp, mirror: mirror ? 1 : 0, rounded: rounded ? 1 : 0,
-            quadSizePx: quadPx, cornerRadiusPx: radius,
-            yuvMatrix: yuvMatrix, yuvOffset: yuvOffset
+            mvp: mvp, yuvMatrix: yuvMatrix, yuvOffset: yuvOffset,
+            texXform: texXform(srcAspect: srcAspect, targetAspect: targetAspect, rotationDeg: rotationDeg),
+            quadSizePx: quadPx, mirror: mirror ? 1 : 0, rounded: rounded ? 1 : 0,
+            cornerRadiusPx: radius
         )
         enc.setVertexBytes(&u, length: MemoryLayout<QuadUniforms>.stride, index: 0)
         enc.setFragmentBytes(&u, length: MemoryLayout<QuadUniforms>.stride, index: 0)
         enc.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+    }
+
+    /// Column-major mat2 mapping target-rect normalized-centered coords to source
+    /// normalized-centered coords: rotates the source upright by `rotationDeg`
+    /// and cover-crops `srcAspect` into `targetAspect` without distortion. Direct
+    /// port of Android `DualCompositor.texXform` (gl/DualCompositor.kt).
+    private func texXform(srcAspect: Float, targetAspect: Float, rotationDeg: Int) -> simd_float2x2 {
+        let s = srcAspect
+        let t = targetAspect
+        let rad = Float(rotationDeg) * .pi / 180
+        let c = cos(rad)
+        let sn = sin(rad)
+        let rotHalfX = abs(c) * (s / 2) + abs(sn) * 0.5
+        let rotHalfY = abs(sn) * (s / 2) + abs(c) * 0.5
+        let kappa = max((t / 2) / rotHalfX, 0.5 / rotHalfY)
+        let inv = 1 / kappa
+        let m00 = inv * c * t / s
+        let m01 = inv * sn / s
+        let m10 = inv * (-sn) * t
+        let m11 = inv * c
+        // simd columns: col0 = (m00, m10), col1 = (m01, m11).
+        return simd_float2x2(columns: (simd_float2(m00, m10), simd_float2(m01, m11)))
     }
 
     private func metalTexture(
