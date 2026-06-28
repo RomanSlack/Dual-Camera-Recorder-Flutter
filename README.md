@@ -71,6 +71,7 @@ Add permissions in the **consuming app** (camera + microphone on Android; `NSCam
 - **FOV / look ≠ the native single-camera app.** Concurrent mode caps resolution and bypasses the vendor's computational pipeline (HDR+, etc.); fitting a 4:3 sensor into 9:16 portrait also crops FOV. This is inherent to the public dual-camera API, not a bug.
 - **iOS:** A12+ / iOS 13+. Multicam is power/thermal-heavy — cap clip duration, downscale under thermal pressure, stop cleanly on `thermalStateDidChange`.
 - Audio is captured once (mic) and muxed into the output. Front-camera mirroring must be correct in the recorded file.
+- **Orientation/aspect (Android):** the camera delivers a *landscape* buffer, but its `SurfaceTexture` transform matrix already rotates it 90° upright into the portrait canvas before the shader samples it — so the compositor's aspect-cover uses the **rotated** aspect (`h/w`), not `w/h`. A 4:3 source → `0.75` (verified un-stretched on **Pixel 8**, front *and* back). If a new device looks stretched, the example app's **Debug tuning** panel (live rotation-offset / mirror / source-aspect override over the `dual_camera_recorder/debug` MethodChannel) dials it in without rebuilding native code.
 
 ## Roadmap
 

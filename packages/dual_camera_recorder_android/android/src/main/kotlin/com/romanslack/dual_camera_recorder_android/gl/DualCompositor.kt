@@ -57,9 +57,21 @@ class DualCompositor(private var width: Int, private var height: Int) {
     private var frontSrcAspect = width.toFloat() / height
 
     // Sensor orientation per camera, to rotate the landscape sensor upright into
-    // the portrait canvas.
+    // the portrait canvas. We keep the raw sensor degrees AND the empirical
+    // offset separately so the offset can be tuned live (debug channel) without
+    // losing the camera-reported value.
     private var backRotation = 0
     private var frontRotation = 0
+    private var backSensorDeg = 0
+    private var frontSensorDeg = 0
+    private var backRotationOffset = BACK_ROTATION_OFFSET
+    private var frontRotationOffset = FRONT_ROTATION_OFFSET
+
+    // Optional debug override of each camera's source aspect (w/h). <= 0 means
+    // "use the camera-reported size". Lets us test whether a stretch is caused
+    // by a wrong reported aspect in concurrent mode.
+    private var backAspectOverride = 0f
+    private var frontAspectOverride = 0f
 
     // Blit program handles.
     private var blitPosLoc = 0
@@ -101,10 +113,16 @@ class DualCompositor(private var width: Int, private var height: Int) {
         createFbo(w, h)
     }
 
-    /** A camera's real frame aspect, for center-crop (avoids stretching). */
+    /**
+     * A camera's real frame aspect, for center-crop (avoids stretching). The
+     * camera delivers a landscape buffer (w>h), but the SurfaceTexture transform
+     * matrix already rotates it 90° upright into our portrait canvas before we
+     * sample it — so the aspect the cover-crop math sees is the rotated one,
+     * h/w. (Verified on Pixel 8: 4:3 source -> 0.75 is the un-stretched value.)
+     */
     fun setSourceSize(isFront: Boolean, w: Int, h: Int) {
-        if (h <= 0) return
-        val a = w.toFloat() / h
+        if (w <= 0) return
+        val a = h.toFloat() / w
         if (isFront) frontSrcAspect = a else backSrcAspect = a
     }
 
@@ -114,9 +132,31 @@ class DualCompositor(private var width: Int, private var height: Int) {
      * rotation (so the upright direction comes out right).
      */
     fun setSourceRotation(isFront: Boolean, degrees: Int) {
-        val offset = if (isFront) FRONT_ROTATION_OFFSET else BACK_ROTATION_OFFSET
-        val d = (((degrees + offset) % 360) + 360) % 360
+        if (isFront) frontSensorDeg = degrees else backSensorDeg = degrees
+        recomputeRotation(isFront)
+    }
+
+    /** Debug: live-adjust the empirical rotation correction (degrees). */
+    fun setRotationOffset(isFront: Boolean, offset: Int) {
+        if (isFront) frontRotationOffset = offset else backRotationOffset = offset
+        recomputeRotation(isFront)
+    }
+
+    /** Debug: override a camera's source aspect (w/h). <= 0 reverts to reported. */
+    fun setAspectOverride(isFront: Boolean, aspect: Float) {
+        if (isFront) frontAspectOverride = aspect else backAspectOverride = aspect
+    }
+
+    private fun recomputeRotation(isFront: Boolean) {
+        val deg = if (isFront) frontSensorDeg else backSensorDeg
+        val offset = if (isFront) frontRotationOffset else backRotationOffset
+        val d = (((deg + offset) % 360) + 360) % 360
         if (isFront) frontRotation = d else backRotation = d
+    }
+
+    private fun effAspect(isFront: Boolean): Float {
+        val override = if (isFront) frontAspectOverride else backAspectOverride
+        return if (override > 0f) override else if (isFront) frontSrcAspect else backSrcAspect
     }
 
     /**
@@ -167,8 +207,8 @@ class DualCompositor(private var width: Int, private var height: Int) {
         val pSt = if (primaryFront) frontSt else backSt
         val sTex = if (primaryFront) backTex else frontTex
         val sSt = if (primaryFront) backSt else frontSt
-        val pSrcAspect = if (primaryFront) frontSrcAspect else backSrcAspect
-        val sSrcAspect = if (primaryFront) backSrcAspect else frontSrcAspect
+        val pSrcAspect = effAspect(primaryFront)
+        val sSrcAspect = effAspect(!primaryFront)
         val pRot = if (primaryFront) frontRotation else backRotation
         val sRot = if (primaryFront) backRotation else frontRotation
         val primaryMirror = primaryFront && layout.mirrorFront

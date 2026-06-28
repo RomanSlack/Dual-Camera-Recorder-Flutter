@@ -135,6 +135,16 @@ class RenderThread(
         handler.post { compositor.setSourceRotation(isFront, degrees) }
     }
 
+    /** Debug: live-tune the empirical rotation correction (degrees). */
+    fun setRotationOffset(isFront: Boolean, offset: Int) {
+        handler.post { compositor.setRotationOffset(isFront, offset) }
+    }
+
+    /** Debug: override a camera's source aspect (w/h); <= 0 reverts to reported. */
+    fun setAspectOverride(isFront: Boolean, aspect: Float) {
+        handler.post { compositor.setAspectOverride(isFront, aspect) }
+    }
+
     /** Flutter SurfaceProducer surface for the live preview. */
     fun setPreviewSurface(surface: Surface?, w: Int, h: Int) {
         handler.post {

@@ -14,6 +14,8 @@ import com.romanslack.dual_camera_recorder_android.camera.CameraSource
 import com.romanslack.dual_camera_recorder_android.gl.CompositeLayout
 import com.romanslack.dual_camera_recorder_android.pipeline.RenderThread
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.TextureRegistry
 import java.io.File
 
@@ -41,17 +43,23 @@ class DualCameraRecorderPlugin : FlutterPlugin, DualCameraHostApi {
   private val mainHandler = Handler(Looper.getMainLooper())
   private val mainExecutor = Executor { mainHandler.post(it) }
   private var thermalListener: PowerManager.OnThermalStatusChangedListener? = null
+  private var debugChannel: MethodChannel? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     context = binding.applicationContext
     textureRegistry = binding.textureRegistry
     flutterApi = DualCameraFlutterApi(binding.binaryMessenger)
     DualCameraHostApi.setUp(binding.binaryMessenger, this)
+    debugChannel = MethodChannel(binding.binaryMessenger, DEBUG_CHANNEL).also {
+      it.setMethodCallHandler(::handleDebug)
+    }
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     releaseSession()
     DualCameraHostApi.setUp(binding.binaryMessenger, null)
+    debugChannel?.setMethodCallHandler(null)
+    debugChannel = null
     flutterApi = null
     textureRegistry = null
     context = null
@@ -224,6 +232,45 @@ class DualCameraRecorderPlugin : FlutterPlugin, DualCameraHostApi {
     callback(Result.success(Unit))
   }
 
+  // --- debug tuning channel (example app only) ---
+
+  /**
+   * Live geometry tuning for the example harness — rotation correction, front
+   * mirror, and source-aspect override — so the front/back orientation and any
+   * stretch can be dialed in on a real device without rebuilding native code.
+   */
+  private fun handleDebug(call: MethodCall, result: MethodChannel.Result) {
+    val render = renderThread
+    if (render == null) {
+      result.error("not_init", "initialize() first", null)
+      return
+    }
+    when (call.method) {
+      "setRotationOffset" -> {
+        val front = call.argument<Boolean>("front") ?: true
+        val offset = call.argument<Int>("offset") ?: 0
+        render.setRotationOffset(front, offset)
+        result.success(null)
+      }
+      "setAspectOverride" -> {
+        val front = call.argument<Boolean>("front") ?: true
+        val aspect = (call.argument<Double>("aspect") ?: 0.0).toFloat()
+        render.setAspectOverride(front, aspect)
+        result.success(null)
+      }
+      "setMirrorFront" -> {
+        val on = call.argument<Boolean>("on") ?: true
+        currentLayout?.let {
+          val updated = it.copy(mirrorFront = on)
+          currentLayout = updated
+          render.updateLayout(updated)
+        }
+        result.success(null)
+      }
+      else -> result.notImplemented()
+    }
+  }
+
   // --- internals ---
 
   private fun releaseSession() {
@@ -337,5 +384,9 @@ class DualCameraRecorderPlugin : FlutterPlugin, DualCameraHostApi {
       }
     }
     return hasFront && hasBack
+  }
+
+  private companion object {
+    const val DEBUG_CHANNEL = "dual_camera_recorder/debug"
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dual_camera_recorder/dual_camera_recorder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gal/gal.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -31,6 +32,15 @@ class _DemoScreenState extends State<DemoScreen> {
   String _status = 'Probing…';
   String? _lastFile;
   bool _circle = false;
+
+  // Live geometry tuning (debug channel) — to dial in the front/back
+  // orientation and fix any stretch directly on the device.
+  static const MethodChannel _debug = MethodChannel('dual_camera_recorder/debug');
+  int _frontOffset = 90; // matches FRONT_ROTATION_OFFSET default
+  int _backOffset = -90; // matches BACK_ROTATION_OFFSET default
+  bool _mirrorFront = true;
+  double _frontAspect = 0; // 0 = auto (use camera-reported)
+  double _backAspect = 0;
 
   LayoutConfig _layout() => DualLayout.pictureInPicture(
         insetScale: 0.32,
@@ -78,10 +88,117 @@ class _DemoScreenState extends State<DemoScreen> {
     }
   }
 
+  int _norm(int deg) => ((deg % 360) + 360) % 360;
+
+  Future<void> _setRotation(bool front, int offset) async {
+    final norm = _norm(offset);
+    setState(() => front ? _frontOffset = norm : _backOffset = norm);
+    await _debug.invokeMethod('setRotationOffset', {'front': front, 'offset': norm});
+  }
+
+  Future<void> _setAspect(bool front, double aspect) async {
+    setState(() => front ? _frontAspect = aspect : _backAspect = aspect);
+    await _debug.invokeMethod('setAspectOverride', {'front': front, 'aspect': aspect});
+  }
+
+  Future<void> _setMirror(bool on) async {
+    setState(() => _mirrorFront = on);
+    await _debug.invokeMethod('setMirrorFront', {'on': on});
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Widget _rotationRow(String label, bool front, int offset) {
+    return Row(
+      children: [
+        SizedBox(width: 110, child: Text(label)),
+        IconButton(
+          icon: const Icon(Icons.rotate_left),
+          onPressed: () => _setRotation(front, offset - 90),
+        ),
+        SizedBox(
+          width: 44,
+          child: Text('$offset°', textAlign: TextAlign.center),
+        ),
+        IconButton(
+          icon: const Icon(Icons.rotate_right),
+          onPressed: () => _setRotation(front, offset + 90),
+        ),
+        const SizedBox(width: 4),
+        for (final d in const [0, 90, 180, 270])
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: ChoiceChip(
+              label: Text('$d'),
+              selected: offset == d,
+              onSelected: (_) => _setRotation(front, d),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _aspectRow(String label, bool front, double aspect) {
+    return Row(
+      children: [
+        SizedBox(width: 110, child: Text(label)),
+        Expanded(
+          child: Slider(
+            min: 0,
+            max: 2,
+            divisions: 40,
+            label: aspect == 0 ? 'auto' : aspect.toStringAsFixed(2),
+            value: aspect,
+            onChanged: (v) => _setAspect(front, v),
+          ),
+        ),
+        SizedBox(
+          width: 52,
+          child: Text(
+            aspect == 0 ? 'auto' : aspect.toStringAsFixed(2),
+            textAlign: TextAlign.right,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _debugPanel() {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        title: const Text('Debug tuning'),
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(bottom: 8),
+        children: [
+          _rotationRow('Front rot', true, _frontOffset),
+          _rotationRow('Back rot', false, _backOffset),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            dense: true,
+            title: const Text('Mirror front'),
+            value: _mirrorFront,
+            onChanged: _setMirror,
+          ),
+          _aspectRow('Front aspect', true, _frontAspect),
+          _aspectRow('Back aspect', false, _backAspect),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () {
+                _setAspect(true, 0);
+                _setAspect(false, 0);
+              },
+              child: const Text('Reset aspect → auto'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -180,6 +297,7 @@ class _DemoScreenState extends State<DemoScreen> {
                         ),
                       ],
                     ),
+                    if (value.isInitialized) _debugPanel(),
                   ],
                 ),
               ),
