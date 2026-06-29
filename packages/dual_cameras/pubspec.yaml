@@ -13,6 +13,14 @@ topics:
   - dual-camera
   - multicam
 
+screenshots:
+  - description: "Front and back cameras composited into one portrait video, shown side by side."
+    path: screenshots/banner.png
+  - description: "Back camera full-frame with a circular selfie inset (picture-in-picture)."
+    path: screenshots/demo-pip.jpg
+  - description: "Swapped: the front camera leads with the rear scene as a circular inset."
+    path: screenshots/demo-swap.jpg
+
 environment:
   sdk: ^3.5.0
   flutter: ">=3.24.0"

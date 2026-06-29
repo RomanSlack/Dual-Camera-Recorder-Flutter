@@ -1,5 +1,9 @@
 # dual_cameras
 
+![Dual Cameras — record the front and back cameras simultaneously in Flutter, composited into one portrait video](screenshots/banner.png)
+
+[Website](https://dualcameras.com) · [GitHub](https://github.com/RomanSlack/dual_cameras) · by [Roman Slack](https://romanslack.com)
+
 Record the **front and back cameras simultaneously** into a single composited
 `.mp4` (and photo), with a live composited preview. Android + iOS.
 

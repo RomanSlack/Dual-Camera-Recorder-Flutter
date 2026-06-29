@@ -124,7 +124,7 @@ Add permissions in the **consuming app** (camera + microphone on Android; `NSCam
 
 ## Why it exists / who uses it
 
-Built first for [belo](https://github.com/RomanSlack)'s short-form capture surfaces (pops / peeks / circles) — a BeReal-style "reaction + scene in one authentic clip" that drops straight into the existing media-upload pipeline. Open-sourced because the gap is real and the official `camera` issues (flutter#51928, #102427, #119858) have hundreds of 👍.
+Built first for [belo](https://www.belo.media/)'s short-form capture surfaces (pops / peeks / circles) — a BeReal-style "reaction + scene in one authentic clip" that drops straight into the existing media-upload pipeline. Open-sourced because the gap is real and the official `camera` issues (flutter#51928, #102427, #119858) have hundreds of 👍.
 
 ## Author
 
