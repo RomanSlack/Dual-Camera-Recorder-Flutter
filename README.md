@@ -25,7 +25,7 @@
 
 <p align="center">
   Built and maintained by <a href="https://romanslack.com"><b>Roman Slack</b></a> ·
-  <a href="https://github.com/RomanSlack/dual_cameras_flutter">RomanSlack/dual_cameras_flutter</a>
+  <a href="https://github.com/RomanSlack/dual_cameras">RomanSlack/dual_cameras</a>
 </p>
 
 > **Status:** **Android — working alpha**, verified end-to-end on a real device (Pixel 8): simultaneous front+back → live preview, recorded composite `.mp4` with in-sync audio, and composited stills. **iOS — alpha, now running on a real iPhone** (iOS 26): the Metal compositor brings up a live composited front+back preview on `AVCaptureMultiCamSession`, with rotate-upright + aspect-cover and the rounded/circle PiP working. Recording and photo run through the same unified compositor (Android parity by construction); full on-device A/V-sync verification is in progress.
@@ -33,7 +33,7 @@
 **Keywords:** Flutter dual camera · record front and back camera simultaneously · both cameras at once · picture-in-picture video · composite video to mp4 · CameraX concurrent camera · AVCaptureMultiCamSession · BeReal-style capture · multi-camera recording plugin.
 
 - **pub.dev package name (planned):** `dual_cameras`
-- **Repo:** [`github.com/RomanSlack/dual_cameras_flutter`](https://github.com/RomanSlack/dual_cameras_flutter)
+- **Repo:** [`github.com/RomanSlack/dual_cameras`](https://github.com/RomanSlack/dual_cameras)
 - **Author:** [Roman Slack](https://romanslack.com) — [GitHub](https://github.com/RomanSlack) · [LinkedIn](https://www.linkedin.com/in/roman-slack-a91a6a266/)
 - **License:** MIT (open-source from day one)
 
@@ -134,7 +134,7 @@ Built first for [belo](https://github.com/RomanSlack)'s short-form capture surfa
 - 💻 GitHub — [@RomanSlack](https://github.com/RomanSlack)
 - 💼 LinkedIn — [Roman Slack](https://www.linkedin.com/in/roman-slack-a91a6a266/)
 
-If this plugin saved you from writing a native dual-camera compositor, a ⭐ on [the repo](https://github.com/RomanSlack/dual_cameras_flutter) is appreciated. Issues and PRs welcome.
+If this plugin saved you from writing a native dual-camera compositor, a ⭐ on [the repo](https://github.com/RomanSlack/dual_cameras) is appreciated. Issues and PRs welcome.
 
 ## License
 

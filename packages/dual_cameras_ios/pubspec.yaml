@@ -3,8 +3,8 @@ description: >-
   iOS implementation of dual_cameras (AVCaptureMultiCamSession +
   Metal compositor + AVAssetWriter).
 version: 0.1.0
-repository: https://github.com/RomanSlack/dual_cameras_flutter/tree/main/packages/dual_cameras_ios
-issue_tracker: https://github.com/RomanSlack/dual_cameras_flutter/issues
+repository: https://github.com/RomanSlack/dual_cameras/tree/main/packages/dual_cameras_ios
+issue_tracker: https://github.com/RomanSlack/dual_cameras/issues
 topics:
   - camera
   - video

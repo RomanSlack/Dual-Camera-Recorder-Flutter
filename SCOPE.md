@@ -1,7 +1,7 @@
 # Dual-Camera Recording Plugin — Scope
 
 > **⚠️ Historical proposal.** This is the original scoping doc. Two things have since been decided and superseded below:
-> 1. **Name** is now `dual_cameras` (repo `dual_cameras_flutter`), open-source from day one under the RomanSlack brand — not `belo_dual_camera`/`flutter_dual_camera` (the latter is already taken on pub.dev).
+> 1. **Name** is now `dual_cameras` (repo `dual_cameras`), open-source from day one under the RomanSlack brand — not `belo_dual_camera`/`flutter_dual_camera` (the latter is already taken on pub.dev).
 > 2. **Android approach** is now a **unified manual GLES compositor** (not CameraX `CompositionSettings`). The "Android is easy via CompositionSettings" framing in §3/§6 below is **superseded** — see **[`MASTER_PLAN.md`](MASTER_PLAN.md)** (what/phasing) and **[`ARCHITECTURE.md`](ARCHITECTURE.md)** (engine) for the current design.
 >
 > The product scope, capabilities, device matrix, and open sign-off questions below still stand.

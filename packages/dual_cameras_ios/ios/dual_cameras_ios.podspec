@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
 Front + back simultaneous camera recording and photo capture, composited on the
 GPU (Metal) into a single video/photo via AVCaptureMultiCamSession.
                        DESC
-  s.homepage         = 'https://github.com/RomanSlack/dual_cameras_flutter'
+  s.homepage         = 'https://github.com/RomanSlack/dual_cameras'
   s.license          = { :type => 'MIT', :file => '../LICENSE' }
   s.author           = { 'RomanSlack' => 'romanslack@gmail.com' }
   s.source           = { :path => '.' }

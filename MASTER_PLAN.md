@@ -24,7 +24,7 @@ This document is the single source of truth for *what* to build and *in what ord
 Standard 4-package split (mirrors the official `camera` plugin: `camera` / `camera_platform_interface` / `camera_android_camerax` / `camera_avfoundation`). Monorepo, each impl versions independently.
 
 ```
-dual_cameras_flutter/                  # repo root (this repo)
+dual_cameras/                  # repo root (this repo)
 ├─ packages/
 │  ├─ dual_cameras/                     # APP-FACING — belo depends on THIS only
 │  │  ├─ lib/dual_cameras.dart          #   DualCameraController + DualCameraPreview widget
@@ -242,10 +242,10 @@ belo (`/home/roman/balo/frontend/messaging_app/`) depends on the **app-facing pa
 ```yaml
 # dev (both repos on disk)
 dual_cameras:
-  path: ../../dual_cameras_flutter/packages/dual_cameras
+  path: ../../dual_cameras/packages/dual_cameras
 # or git (monorepo subdir)
 dual_cameras:
-  git: { url: https://github.com/RomanSlack/dual_cameras_flutter.git, ref: main, path: packages/dual_cameras }
+  git: { url: https://github.com/RomanSlack/dual_cameras.git, ref: main, path: packages/dual_cameras }
 ```
 Permissions the **consumer** must add (the plugin can't inject them): iOS `NSCameraUsageDescription` + `NSMicrophoneUsageDescription`; Android `CAMERA` + `RECORD_AUDIO`, `minSdkVersion 24`. Runtime prompts remain belo's responsibility (`permission_handler`). Output is a normal `.mp4`/photo that drops straight into belo's existing media-upload pipeline.
 

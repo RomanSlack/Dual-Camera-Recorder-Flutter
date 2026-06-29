@@ -3,22 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dual Cameras: record both cameras at once in Flutter</title>
-<meta name="description" content="An open-source Flutter plugin that records the front and back cameras simultaneously, composited live on the GPU into a single portrait .mp4 and photo. Android & iOS.">
+<title>Dual Cameras — record the front and back camera at once in Flutter (Android & iOS)</title>
+<meta name="description" content="Dual Cameras is an open-source Flutter plugin that records the front and back cameras at the same time, compositing them live on the GPU into a single portrait MP4 and photo. Picture-in-picture, circle, or split. Android and iOS. By Roman Slack.">
+<meta name="keywords" content="Flutter dual camera, record front and back camera simultaneously, both cameras at once, dual camera recording Flutter plugin, picture-in-picture video, composited video, CameraX concurrent camera, AVCaptureMultiCamSession, BeReal style camera, Snapchat dual capture, dual_cameras, Roman Slack">
 <meta name="author" content="Roman Slack">
-<link rel="canonical" href="https://dualcamerarecorder.dev/">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="theme-color" content="#027DFD">
+<link rel="canonical" href="https://dualcameras.com/">
 
-<!-- Open Graph / Twitter (update the URL to your deploy domain) -->
+<!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Dual Cameras: record both cameras at once in Flutter">
-<meta property="og:description" content="Front + back, one take, one file. A GPU-composited dual-camera recording plugin for Flutter (Android & iOS).">
-<meta property="og:image" content="assets/banner.png">
+<meta property="og:site_name" content="Dual Cameras">
+<meta property="og:url" content="https://dualcameras.com/">
+<meta property="og:title" content="Dual Cameras — record the front and back camera at once in Flutter">
+<meta property="og:description" content="Open-source Flutter plugin. Front + back cameras, one take, one file: composited live on the GPU into a single portrait MP4 and photo. Android & iOS.">
+<meta property="og:image" content="https://dualcameras.com/assets/banner.png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="773">
+<meta property="og:image:alt" content="Dual Cameras: two phones showing front and back camera composited into one portrait video.">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Dual Cameras: Flutter dual-camera recording">
-<meta name="twitter:description" content="Record the front and back cameras at once, composited live into a single portrait video.">
-<meta name="twitter:image" content="assets/banner.png">
+<meta name="twitter:title" content="Dual Cameras — Flutter dual-camera recording (Android & iOS)">
+<meta name="twitter:description" content="Record the front and back cameras at once, composited live into a single portrait video. Open source, MIT, by Roman Slack.">
+<meta name="twitter:image" content="https://dualcameras.com/assets/banner.png">
+<meta name="twitter:image:alt" content="Dual Cameras Flutter plugin banner.">
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23027DFD'/><circle cx='9' cy='12' r='4.5' fill='white'/><circle cx='16' cy='9' r='2.5' fill='white'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%23027DFD'/><circle cx='9' cy='12' r='4.5' fill='white'/><circle cx='16' cy='9' r='2.5' fill='white'/></svg>">
+
+<!-- Structured data: software, author (Roman Slack), site, FAQ — for Google rich results and AI answer engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://romanslack.com/#person",
+      "name": "Roman Slack",
+      "url": "https://romanslack.com",
+      "jobTitle": "Software Engineer",
+      "sameAs": [
+        "https://github.com/RomanSlack",
+        "https://www.linkedin.com/in/roman-slack-a91a6a266/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://dualcameras.com/#website",
+      "url": "https://dualcameras.com/",
+      "name": "Dual Cameras",
+      "description": "Open-source Flutter plugin to record the front and back cameras simultaneously into one composited video.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://romanslack.com/#person" }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://dualcameras.com/#software",
+      "name": "Dual Cameras",
+      "alternateName": "dual_cameras",
+      "description": "An open-source Flutter plugin that records the front and back cameras at the same time, compositing them live on the GPU (GLES on Android, Metal on iOS) into a single portrait MP4 and photo, with a real-time preview. Supports picture-in-picture, circle inset, and split layouts.",
+      "url": "https://dualcameras.com/",
+      "codeRepository": "https://github.com/RomanSlack/dual_cameras",
+      "programmingLanguage": ["Dart", "Kotlin", "Swift"],
+      "runtimePlatform": ["Flutter", "Android", "iOS"],
+      "operatingSystem": ["Android", "iOS"],
+      "license": "https://opensource.org/licenses/MIT",
+      "keywords": "Flutter dual camera, record both cameras simultaneously, picture-in-picture video, composited video, CameraX concurrent camera, AVCaptureMultiCamSession",
+      "author": { "@id": "https://romanslack.com/#person" },
+      "maintainer": { "@id": "https://romanslack.com/#person" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "Dual Cameras",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Android, iOS",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@id": "https://romanslack.com/#person" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://dualcameras.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can Flutter record from the front and back camera at the same time?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not with the official camera plugin. Dual Cameras is an open-source Flutter plugin that does it: it owns a native GPU compositor (GLES on Android, Metal on iOS) and writes the front and back feeds into a single composited portrait MP4 and photo." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the Dual Cameras Flutter plugin?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Dual Cameras (package: dual_cameras) is an open-source Flutter plugin by Roman Slack that records the front and back cameras simultaneously, composited live on the GPU into one portrait MP4 and photo, with a real-time preview. It supports picture-in-picture, circle inset, and split layouts on Android and iOS." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which devices support simultaneous dual-camera recording?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It is hardware-gated. Android needs concurrent-camera support (capped around 720p, for example Pixel 6 and newer or Galaxy S22 and newer). iOS needs an A12 chip or newer on iOS 13+ (iPhone XS and newer). The plugin probes for support and falls back to single-camera capture when concurrency is unavailable." }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I install Dual Cameras?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Run flutter pub add dual_cameras, add camera and microphone permissions in the host app, then use DualCameraController to initialize, preview, record, and take photos." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Dual Cameras free and open source?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Dual Cameras is MIT licensed and open source, built and maintained by Roman Slack." }
+        }
+      ]
+    }
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -201,6 +298,15 @@
   .pcard .status.wip { background: #f0f1f3; color: #6b7280; }
   .pcard p { font-size: 14px; color: var(--muted); margin-top: 6px; }
 
+  /* ---------- faq ---------- */
+  .faq-head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+  .faq-list { max-width: 760px; margin: 0 auto; }
+  .faq-item { border-top: 1px solid var(--line); padding: 26px 0; }
+  .faq-item:last-child { border-bottom: 1px solid var(--line); }
+  .faq-item h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 10px; }
+  .faq-item p { color: var(--muted); font-size: 15.5px; line-height: 1.6; }
+  .faq-item code, .faq-item .mono { font-size: 14px; color: var(--ink); background: var(--surface); padding: 1px 6px; border-radius: 5px; }
+
   /* ---------- footer ---------- */
   footer { border-top: 1px solid var(--line); padding: 56px 0 48px; }
   .foot { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
@@ -249,7 +355,8 @@
       <a href="#features" class="hide-sm">Features</a>
       <a href="#install" class="hide-sm">Install</a>
       <a href="#platforms" class="hide-sm">Platforms</a>
-      <a class="ghlink" href="https://github.com/RomanSlack/dual_cameras_flutter" target="_blank" rel="noopener" aria-label="View dual_cameras on GitHub">
+      <a href="#faq" class="hide-sm">FAQ</a>
+      <a class="ghlink" href="https://github.com/RomanSlack/dual_cameras" target="_blank" rel="noopener" aria-label="View dual_cameras on GitHub">
         <svg viewBox="0 0 24 24"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-1.7c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>
         <span>GitHub</span>
       </a>
@@ -274,7 +381,7 @@
       </div>
 
       <div class="cta">
-        <a class="btn" href="https://github.com/RomanSlack/dual_cameras_flutter" target="_blank" rel="noopener">View on GitHub</a>
+        <a class="btn" href="https://github.com/RomanSlack/dual_cameras" target="_blank" rel="noopener">View on GitHub</a>
         <a class="btn ghost" href="#features">See what it does</a>
       </div>
 
@@ -433,6 +540,37 @@ cam.<span class="f">swapPrimary</span>();              <span class="c">// flip l
   </div>
 </section>
 
+<section id="faq">
+  <div class="wrap">
+    <div class="faq-head">
+      <span class="eyebrow">FAQ</span>
+      <h2 style="margin-top:14px">Questions, answered.</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <h3>Can Flutter record from the front and back camera at the same time?</h3>
+        <p>Not with the official <span class="mono">camera</span> plugin. Dual Cameras is the open-source Flutter plugin that does it: it owns a native GPU compositor (GLES on Android, Metal on iOS) and writes both feeds into a single composited portrait MP4 and photo.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What is the Dual Cameras Flutter plugin?</h3>
+        <p>Dual Cameras (package <span class="mono">dual_cameras</span>) is an open-source Flutter plugin by Roman Slack that records the front and back cameras simultaneously, composited live on the GPU into one portrait MP4 and photo with a real-time preview. It supports picture-in-picture, circle inset, and split layouts on Android and iOS.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Which devices support simultaneous dual-camera recording?</h3>
+        <p>It is hardware-gated. Android needs concurrent-camera support (capped around 720p, e.g. Pixel 6 and newer or Galaxy S22 and newer). iOS needs an A12 chip or newer on iOS 13+ (iPhone XS and newer). The plugin probes for support and falls back to single-camera capture when concurrency is unavailable.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do I install Dual Cameras?</h3>
+        <p>Run <span class="mono">flutter pub add dual_cameras</span>, add camera and microphone permissions in the host app, then use <span class="mono">DualCameraController</span> to initialize, preview, record, and take photos.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is Dual Cameras free and open source?</h3>
+        <p>Yes. Dual Cameras is MIT licensed and open source, built and maintained by <a href="https://romanslack.com" style="color:var(--blue);font-weight:600">Roman Slack</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="foot">
@@ -443,9 +581,9 @@ cam.<span class="f">swapPrimary</span>();              <span class="c">// flip l
       <div class="links">
         <div class="col">
           <h4>Project</h4>
-          <a href="https://github.com/RomanSlack/dual_cameras_flutter" target="_blank" rel="noopener">GitHub repo</a>
-          <a href="https://github.com/RomanSlack/dual_cameras_flutter#readme" target="_blank" rel="noopener">Documentation</a>
-          <a href="https://github.com/RomanSlack/dual_cameras_flutter/issues" target="_blank" rel="noopener">Issues</a>
+          <a href="https://github.com/RomanSlack/dual_cameras" target="_blank" rel="noopener">GitHub repo</a>
+          <a href="https://github.com/RomanSlack/dual_cameras#readme" target="_blank" rel="noopener">Documentation</a>
+          <a href="https://github.com/RomanSlack/dual_cameras/issues" target="_blank" rel="noopener">Issues</a>
         </div>
         <div class="col">
           <h4>Roman Slack</h4>

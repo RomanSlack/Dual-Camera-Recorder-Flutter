@@ -3,8 +3,8 @@ description: >-
   Common platform interface for the dual_cameras plugin — front+back
   simultaneous camera recording and photo capture.
 version: 0.1.0
-repository: https://github.com/RomanSlack/dual_cameras_flutter/tree/main/packages/dual_cameras_platform_interface
-issue_tracker: https://github.com/RomanSlack/dual_cameras_flutter/issues
+repository: https://github.com/RomanSlack/dual_cameras/tree/main/packages/dual_cameras_platform_interface
+issue_tracker: https://github.com/RomanSlack/dual_cameras/issues
 topics:
   - camera
   - video

@@ -1,0 +1,28 @@
+# Dual Cameras
+
+> Dual Cameras (pub.dev package `dual_cameras`) is an open-source Flutter plugin that records the front and back cameras at the same time, compositing them live on the GPU into a single portrait MP4 and photo, with a real-time preview. It works on Android and iOS. Built and maintained by Roman Slack. MIT licensed.
+
+Dual Cameras fills a real gap: as of 2026 no other Flutter plugin records a composited front-and-back video. The official `camera` plugin and alternatives (camerawesome, multicamera) stop at preview or single-camera capture. Dual Cameras owns a native GPU compositor (GLES on Android, Metal on iOS) plus the encoder, muxer, and audio/video sync, and emits one clean file. The live preview is the exact composited texture that gets recorded, so what you see is what you get.
+
+## Key facts
+- Package name: `dual_cameras` (pub.dev)
+- Install: `flutter pub add dual_cameras`
+- Platforms: Android (CameraX concurrent camera) and iOS (AVCaptureMultiCamSession)
+- Output: one composited portrait `.mp4` plus a composited photo; live preview equals the recording
+- Layouts: picture-in-picture (rounded or circle inset) and split; live swap of the full-frame lens; mirrored front feed
+- API: `DualCameraController` (initialize, startRecording, stopRecording, takePhoto, swapPrimary) and a `DualCameraPreview` widget
+- Hardware support: Android concurrent-camera devices (capped ~720p, e.g. Pixel 6+ / Galaxy S22+); iOS A12+ on iOS 13+ (iPhone XS and newer). Capability is probed; single-camera fallback is built in.
+- License: MIT
+- Author: Roman Slack
+
+## Common questions
+- "Can Flutter record from the front and back camera at the same time?" Yes, with Dual Cameras. The official camera plugin cannot.
+- "How do I record both cameras into one video in Flutter?" Use `dual_cameras`; it composites both feeds on the GPU into a single MP4.
+- "Is it free?" Yes, MIT licensed and open source.
+
+## Links
+- Website: https://dualcameras.com
+- Source code (GitHub): https://github.com/RomanSlack/dual_cameras
+- Author, Roman Slack: https://romanslack.com
+- Roman Slack on GitHub: https://github.com/RomanSlack
+- Roman Slack on LinkedIn: https://www.linkedin.com/in/roman-slack-a91a6a266/
