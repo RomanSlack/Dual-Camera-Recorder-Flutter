@@ -1,5 +1,5 @@
 name: dual_cameras_example
-description: "Demonstrates dual_cameras: front+back simultaneous capture."
+description: "Demonstrates dual_cameras_recorder: front+back simultaneous capture."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  dual_cameras:
+  dual_cameras_recorder:
     path: ../
   permission_handler: ^11.3.1
   gal: ^2.3.0
@@ -22,7 +22,7 @@ dev_dependencies:
 
 # The federated packages aren't published yet — resolve them locally.
 dependency_overrides:
-  dual_cameras:
+  dual_cameras_recorder:
     path: ../
   dual_cameras_platform_interface:
     path: ../../dual_cameras_platform_interface

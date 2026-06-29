@@ -1,4 +1,4 @@
-# dual_cameras
+# dual_cameras_recorder
 
 ![Dual Cameras — record the front and back cameras simultaneously in Flutter, composited into one portrait video](screenshots/banner.png)
 
@@ -8,7 +8,7 @@ Record the **front and back cameras simultaneously** into a single composited
 `.mp4` (and photo), with a live composited preview. Android + iOS.
 
 The OS APIs can do this, but no Flutter plugin records the *composited* result —
-they stop at preview or unmerged photos. `dual_cameras` owns a unified
+they stop at preview or unmerged photos. `dual_cameras_recorder` owns a unified
 manual GPU compositor (OpenGL ES on Android, Metal on iOS) so one composite per
 frame feeds the encoder **and** the preview, producing a clean PiP/split clip
 that drops straight into your existing media pipeline.
@@ -22,7 +22,7 @@ that drops straight into your existing media pipeline.
 
 ```yaml
 dependencies:
-  dual_cameras: ^0.1.0
+  dual_cameras_recorder: ^0.1.0
 ```
 
 Add permissions in the **consuming app**:
@@ -35,7 +35,7 @@ Request them at runtime (e.g. with `permission_handler`) before `initialize`.
 ## Usage
 
 ```dart
-import 'package:dual_cameras/dual_cameras.dart';
+import 'package:dual_cameras_recorder/dual_cameras_recorder.dart';
 
 final cam = DualCameraController();
 
@@ -79,7 +79,7 @@ validating the lag-free targets on real hardware.
 
 ## How it works
 
-`dual_cameras` is a federated plugin. The Android side feeds two
+`dual_cameras_recorder` is a federated plugin. The Android side feeds two
 concurrent `SurfaceTexture`s into a single-GL-thread compositor →
 `MediaCodec`/`MediaMuxer`; iOS uses `AVCaptureMultiCamSession` → a Metal
 compositor → `AVAssetWriter`. Audio and video share one monotonic clock so they

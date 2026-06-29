@@ -1,4 +1,4 @@
-name: dual_cameras
+name: dual_cameras_recorder
 description: >-
   Record the front and back cameras at the same time, composited live on the GPU
   into a single portrait video and photo, with a real-time preview. Android + iOS.

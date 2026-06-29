@@ -1,4 +1,4 @@
-import 'package:dual_cameras/dual_cameras.dart';
+import 'package:dual_cameras_recorder/dual_cameras_recorder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gal/gal.dart';

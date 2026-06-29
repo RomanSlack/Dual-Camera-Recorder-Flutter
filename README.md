@@ -2,13 +2,14 @@
   <img src="readme_assets/banner.png" alt="Dual Cameras — record the front and back cameras simultaneously in Flutter, composited into a single portrait video" width="820">
 </p>
 
-<h1 align="center">dual_cameras</h1>
+<h1 align="center">dual_cameras_recorder</h1>
 
 <p align="center">
   <b>Record the front and back cameras at the same time in Flutter</b> — composited live on the GPU into a <b>single portrait <code>.mp4</code></b> and photo, with a real-time preview. Picture-in-picture, circle inset, or split. The BeReal / Snapchat–style dual-camera capture, as a proper open-source federated plugin for <b>Android &amp; iOS</b>.
 </p>
 
 <p align="center">
+  <a href="https://pub.dev/packages/dual_cameras_recorder"><img src="https://img.shields.io/pub/v/dual_cameras_recorder?style=flat-square&logo=dart&label=pub.dev&color=027DFD" alt="pub.dev package"></a>
   <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-1d1d1f?style=flat-square" alt="Platform: Android and iOS">
   <img src="https://img.shields.io/badge/Flutter-%E2%89%A5%203.24-027DFD?style=flat-square&logo=flutter&logoColor=white" alt="Flutter 3.24+">
   <img src="https://img.shields.io/badge/license-MIT-3DDC84?style=flat-square" alt="MIT License">
@@ -32,7 +33,7 @@
 
 **Keywords:** Flutter dual camera · record front and back camera simultaneously · both cameras at once · picture-in-picture video · composite video to mp4 · CameraX concurrent camera · AVCaptureMultiCamSession · BeReal-style capture · multi-camera recording plugin.
 
-- **pub.dev package name (planned):** `dual_cameras`
+- **pub.dev:** [`dual_cameras_recorder`](https://pub.dev/packages/dual_cameras_recorder) — `flutter pub add dual_cameras_recorder`
 - **Repo:** [`github.com/RomanSlack/dual_cameras`](https://github.com/RomanSlack/dual_cameras)
 - **Author:** [Roman Slack](https://romanslack.com) — [GitHub](https://github.com/RomanSlack) · [LinkedIn](https://www.linkedin.com/in/roman-slack-a91a6a266/)
 - **License:** MIT (open-source from day one)
@@ -128,7 +129,7 @@ Built first for [belo](https://www.belo.media/)'s short-form capture surfaces (p
 
 ## Author
 
-**dual_cameras** is built and maintained by **[Roman Slack](https://romanslack.com)** — software engineer and creator of [belo](https://github.com/RomanSlack).
+**dual_cameras_recorder** is built and maintained by **[Roman Slack](https://romanslack.com)** — software engineer and creator of [belo](https://github.com/RomanSlack).
 
 - 🌐 Website — [romanslack.com](https://romanslack.com)
 - 💻 GitHub — [@RomanSlack](https://github.com/RomanSlack)

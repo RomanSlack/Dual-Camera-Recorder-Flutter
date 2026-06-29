@@ -1,12 +1,12 @@
 # Dual Cameras
 
-> Dual Cameras (pub.dev package `dual_cameras`) is an open-source Flutter plugin that records the front and back cameras at the same time, compositing them live on the GPU into a single portrait MP4 and photo, with a real-time preview. It works on Android and iOS. Built and maintained by Roman Slack. MIT licensed.
+> Dual Cameras (pub.dev package `dual_cameras_recorder`) is an open-source Flutter plugin that records the front and back cameras at the same time, compositing them live on the GPU into a single portrait MP4 and photo, with a real-time preview. It works on Android and iOS. Built and maintained by Roman Slack. MIT licensed.
 
 Dual Cameras fills a real gap: as of 2026 no other Flutter plugin records a composited front-and-back video. The official `camera` plugin and alternatives (camerawesome, multicamera) stop at preview or single-camera capture. Dual Cameras owns a native GPU compositor (GLES on Android, Metal on iOS) plus the encoder, muxer, and audio/video sync, and emits one clean file. The live preview is the exact composited texture that gets recorded, so what you see is what you get.
 
 ## Key facts
-- Package name: `dual_cameras` (pub.dev)
-- Install: `flutter pub add dual_cameras`
+- Package name: `dual_cameras_recorder` (pub.dev)
+- Install: `flutter pub add dual_cameras_recorder`
 - Platforms: Android (CameraX concurrent camera) and iOS (AVCaptureMultiCamSession)
 - Output: one composited portrait `.mp4` plus a composited photo; live preview equals the recording
 - Layouts: picture-in-picture (rounded or circle inset) and split; live swap of the full-frame lens; mirrored front feed
@@ -17,7 +17,7 @@ Dual Cameras fills a real gap: as of 2026 no other Flutter plugin records a comp
 
 ## Common questions
 - "Can Flutter record from the front and back camera at the same time?" Yes, with Dual Cameras. The official camera plugin cannot.
-- "How do I record both cameras into one video in Flutter?" Use `dual_cameras`; it composites both feeds on the GPU into a single MP4.
+- "How do I record both cameras into one video in Flutter?" Use `dual_cameras_recorder`; it composites both feeds on the GPU into a single MP4.
 - "Is it free?" Yes, MIT licensed and open source.
 
 ## Links

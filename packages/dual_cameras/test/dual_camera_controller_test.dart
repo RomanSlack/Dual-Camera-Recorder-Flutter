@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:dual_cameras/dual_cameras.dart';
+import 'package:dual_cameras_recorder/dual_cameras_recorder.dart';
 import 'package:dual_cameras_platform_interface/dual_cameras_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';

@@ -1,6 +1,6 @@
 /// Record front + back cameras simultaneously into one composited video and
 /// photo, with a live composited preview. Android + iOS.
-library dual_cameras;
+library dual_cameras_recorder;
 
 export 'package:dual_cameras_platform_interface/dual_cameras_platform_interface.dart'
     show
